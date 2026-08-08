@@ -8,7 +8,7 @@ import urllib.request
 
 ALLOWED_SNI_FILE = "wl_sni.txt"
 RAW_CONFIGS_FILE = "raw_configs.txt"
-OUTPUT_FILE = "wl_228.json"  # Единый файл подписки с авто-выбором и серверами
+OUTPUT_FILE = "wl_228.json"
 
 
 def load_allowed_snis(filepath):
@@ -264,7 +264,7 @@ async def main():
 
     auto_selector = {
         "type": "urltest",
-        "tag": "⚡ Авто обход LTE (Smart Switch)",
+        "tag": "⚡ Авто обход LTE",
         "outbounds": all_tags,
         "url": "https://www.gstatic.com/generate_204",
         "interval": "3m",
