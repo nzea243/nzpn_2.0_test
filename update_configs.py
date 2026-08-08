@@ -7,8 +7,8 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
-ALLOWED_SNI_FILE = "allowed_snis.txt"
-RAW_CONFIGS_FILE = "raw_configs.txt"
+ALLOWED_SNI_FILE = "wl_sni.txt"
+RAW_CONFIGS_FILE = "all_source_configs.txt"
 OUTPUT_FILE = "wl_228.json"
 
 
