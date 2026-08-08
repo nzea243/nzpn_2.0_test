@@ -1,0 +1,32 @@
+name: Auto-Upd Sub
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Автозапуск каждый час
+  workflow_dispatch: # Кнопка ручного запуска в GitHub
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run updater script
+        run: python update_configs.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add wl_228.json
+          git diff-index --quiet HEAD || git commit -m "Auto-update subscription [skip ci]"
+          git push
