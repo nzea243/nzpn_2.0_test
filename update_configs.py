@@ -5,9 +5,10 @@ import socket
 import time
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone, timedelta
 
-ALLOWED_SNI_FILE = "wl_sni.txt"
-RAW_CONFIGS_FILE = "all_source_configs.txt"
+ALLOWED_SNI_FILE = "allowed_snis.txt"
+RAW_CONFIGS_FILE = "raw_configs.txt"
 OUTPUT_FILE = "wl_228.json"
 
 
@@ -29,8 +30,7 @@ def decode_base64_if_needed(text):
         return text
     try:
         padded = text + "=" * (-len(text) % 4)
-        decoded = base64.b64decode(padded).decode("utf-8", errors="ignore")
-        return decoded
+        return base64.b64decode(padded).decode("utf-8", errors="ignore")
     except Exception:
         return text
 
@@ -68,9 +68,7 @@ def load_all_vless_urls():
 
     for line in lines:
         if line.startswith("http://") or line.startswith("https://"):
-            print(f"Скачивание подписки: {line}")
-            sub_links = fetch_subscription_links(line)
-            vless_urls.extend(sub_links)
+            vless_urls.extend(fetch_subscription_links(line))
         elif line.startswith("vless://"):
             vless_urls.append(line)
 
@@ -84,11 +82,11 @@ def parse_vless(url):
         parsed = urllib.parse.urlparse(url)
         query = urllib.parse.parse_qs(parsed.query)
 
-        uuid = parsed.username
+        uuid = parsed.username or "00000000-0000-0000-0000-000000000000"
         host = parsed.hostname
         port = parsed.port or 443
 
-        if not host or not uuid:
+        if not host:
             return None
 
         sni = (
@@ -97,29 +95,19 @@ def parse_vless(url):
             or host
         )
 
-        net_type = query.get("type", ["tcp"])[0]
-        security = query.get("security", ["none"])[0]
-        path = query.get("path", [""])[0]
-        service_name = query.get("serviceName", [""])[0]
-        pbk = query.get("pbk", [""])[0]
-        sid = query.get("sid", [""])[0]
-        fp = query.get("fp", ["chrome"])[0]
-        flow = query.get("flow", [""])[0]
-
         return {
-            "raw_url": url,
             "uuid": uuid,
             "host": host,
             "port": int(port),
             "sni": sni.lower() if sni else "",
-            "net_type": net_type,
-            "security": security,
-            "path": path,
-            "service_name": service_name,
-            "pbk": pbk,
-            "sid": sid,
-            "fp": fp,
-            "flow": flow,
+            "net_type": query.get("type", ["tcp"])[0],
+            "security": query.get("security", ["none"])[0],
+            "path": query.get("path", [""])[0],
+            "service_name": query.get("serviceName", [""])[0],
+            "pbk": query.get("pbk", [""])[0],
+            "sid": query.get("sid", [""])[0],
+            "fp": query.get("fp", ["chrome"])[0],
+            "flow": query.get("flow", [""])[0],
         }
     except Exception:
         return None
@@ -214,14 +202,12 @@ async def main():
         print("Нет VLESS ссылок для обработки.")
         return
 
-    # 1. Фильтрация по разрешённым SNI
     filtered_configs = []
     for raw in raw_vless_links:
         cfg = parse_vless(raw)
         if cfg and (not allowed_snis or cfg["sni"] in allowed_snis):
             filtered_configs.append(cfg)
 
-    # 2. Проверка задержки (ping)
     ping_tasks = [
         measure_ping(cfg["host"], cfg["port"]) for cfg in filtered_configs
     ]
@@ -235,48 +221,68 @@ async def main():
             valid_configs.append(cfg)
             active_hosts.append(cfg["host"])
 
-    # 3. Определение гео-локаций по IP
     country_map = await get_countries_batch(active_hosts)
     for cfg in valid_configs:
         code, name = country_map.get(cfg["host"], ("XX", "Unknown"))
         cfg["country_code"] = code
         cfg["country_name"] = name
 
-    # 4. Выбор лучшего узла для каждой страны
     country_best = {}
     for cfg in valid_configs:
         cc = cfg["country_code"]
         if cc not in country_best or cfg["ping"] < country_best[cc]["ping"]:
             country_best[cc] = cfg
 
-    # 5. ТОП-20 лучших локаций
     top_20 = sorted(country_best.values(), key=lambda x: x["ping"])[:20]
 
-    # 6. Сборка единого JSON со смарт-выбором и узлами
-    outbounds = []
-    all_tags = []
+    if not top_20:
+        print("Нет рабочих серверов.")
+        return
+
+    outbound_tags = []
+    server_outbounds = []
 
     for cfg in top_20:
         flag = get_country_flag(cfg["country_code"])
         tag_name = f"{flag} {cfg['country_name']} | {int(cfg['ping'])}ms"
-        all_tags.append(tag_name)
-        outbounds.append(build_singbox_vless_outbound(cfg, tag_name))
+        outbound_tags.append(tag_name)
+        server_outbounds.append(build_singbox_vless_outbound(cfg, tag_name))
+
+    now_msk = datetime.now(timezone(timedelta(hours=3))).strftime(
+        "%d.%m.%Y %H:%M MSK"
+    )
+
+    info_outbound = {
+        "type": "vless",
+        "tag": "Для обхода белых списков🏳️👇",
+        "server": "0.0.0.0",
+        "server_port": 443,
+        "uuid": "00000000-0000-0000-0000-000000000000",
+    }
 
     auto_selector = {
         "type": "urltest",
         "tag": "⚡ Авто обход LTE",
-        "outbounds": all_tags,
+        "outbounds": outbound_tags,
         "url": "https://www.gstatic.com/generate_204",
         "interval": "3m",
         "tolerance": 50,
     }
 
-    final_subscription = {"outbounds": [auto_selector] + outbounds}
+    final_json = {
+        "#profile-title": "nzea234vpnツ 2.0",
+        "#profile-update-interval": 1,
+        "#announce": f"Последний апдейт на GitHub: {now_msk} | Версия: 2.0 | Не работает — обнови подписку на две стрелочки 👇",
+        "#support-url": "https://t.me/nzea234",
+        "#profile-web-page-url": "http://t.me/send?start=IV9P4rO9112W",
+        "#hide-settings": 1,
+        "outbounds": [info_outbound, auto_selector] + server_outbounds,
+    }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(final_subscription, f, indent=2, ensure_ascii=False)
+        json.dump(final_json, f, indent=2, ensure_ascii=False)
 
-    print(f"Готово! Единая подписка сохранена в {OUTPUT_FILE}")
+    print(f"Подписка успешно сохранена в {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
