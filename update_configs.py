@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import json
-import socket
 import time
 import urllib.parse
 import urllib.request
@@ -239,13 +238,13 @@ async def main():
         print("Нет рабочих серверов.")
         return
 
-    outbound_tags = []
+    server_tags = []
     server_outbounds = []
 
     for cfg in top_20:
         flag = get_country_flag(cfg["country_code"])
         tag_name = f"{flag} {cfg['country_name']} | {int(cfg['ping'])}ms"
-        outbound_tags.append(tag_name)
+        server_tags.append(tag_name)
         server_outbounds.append(build_singbox_vless_outbound(cfg, tag_name))
 
     now_msk = datetime.now(timezone(timedelta(hours=3))).strftime(
@@ -263,26 +262,56 @@ async def main():
     auto_selector = {
         "type": "urltest",
         "tag": "⚡ Авто обход LTE",
-        "outbounds": outbound_tags,
+        "outbounds": server_tags,
         "url": "https://www.gstatic.com/generate_204",
         "interval": "3m",
         "tolerance": 50,
     }
 
+    direct_outbound = {"type": "direct", "tag": "direct"}
+    block_outbound = {"type": "block", "tag": "block"}
+
+    inbounds = [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "inet4_address": "172.19.0.1/30",
+            "auto_route": True,
+            "strict_route": True,
+            "sniff": True,
+        },
+        {
+            "type": "mixed",
+            "tag": "mixed-in",
+            "listen": "127.0.0.1",
+            "listen_port": 2080,
+            "sniff": True,
+        },
+    ]
+
+    route = {
+        "rules": [{"outbound": "⚡ Авто обход LTE"}],
+        "auto_detect_interface": True,
+    }
+
     final_json = {
         "#profile-title": "nzea234vpnツ 2.0",
         "#profile-update-interval": 1,
-        "#announce": f"Последний апдейт на GitHub: {now_msk} | Версия: 2.0 | Не работает — обнови подписку на две стрелочки 👇",
+        "#announce": f"Обновлено: {now_msk} | Версия 2.0",
         "#support-url": "https://t.me/nzea234",
         "#profile-web-page-url": "http://t.me/send?start=IV9P4rO9112W",
         "#hide-settings": 1,
-        "outbounds": [info_outbound, auto_selector] + server_outbounds,
+        "inbounds": inbounds,
+        "outbounds": [info_outbound, auto_selector]
+        + server_outbounds
+        + [direct_outbound, block_outbound],
+        "route": route,
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(final_json, f, indent=2, ensure_ascii=False)
 
-    print(f"Подписка успешно сохранена в {OUTPUT_FILE}")
+    print(f"Конфигурация успешно сохранена в {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
