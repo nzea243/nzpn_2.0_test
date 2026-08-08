@@ -6,7 +6,7 @@ import time
 import urllib.parse
 import urllib.request
 
-ALLOWED_SNI_FILE = "allowed_snis.txt"
+ALLOWED_SNI_FILE = "wl_sni.txt"
 RAW_CONFIGS_FILE = "raw_configs.txt"
 OUTPUT_FILE = "wl_228.json"  # Единый файл подписки с авто-выбором и серверами
 
