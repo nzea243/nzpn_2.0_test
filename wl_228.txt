@@ -1,5 +1,5 @@
 #profile-title: nzea234vpnツ 2.0
-#announce: Последний апдейт на GitHub: 18:29 11.08.2026 UTC
+#announce: Последний апдейт на GitHub: 18:30 11.08.2026 UTC
 Версия: 2.0 (с возвращением!!!)
 Не работает — обнови подписку на две стрелочки
 #support-url: https://t.me/nzea_tri_bykvi
