@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import requests
 import random
 import base64
@@ -6,7 +5,6 @@ import re
 from datetime import datetime, timezone
 from urllib.parse import unquote, quote, urlparse, parse_qs
 
-# ─── Заголовок файла ──────────────────────────────────────────────────────────
 def build_header():
     now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
     return f"""\
@@ -49,10 +47,6 @@ BYPASS_SOURCES = [
 VALID_PREFIXES = ('vless://', 'vmess://', 'trojan://', 'ss://', 'ssr://', 'hysteria2://', 'hy2://', 'tuic://')
 ALLOWED_PREFIXES = ('vless://', 'hysteria2://', 'hy2://')
 
-# ─── GeoIP-распознавание стран через API ─────────────────────────────────────
-# Страна определяется по IP сервера, а не по названию/флагу в remark.
-# Используется бесплатный batch API ip-api.com: до 100 IP за один запрос.
-# Результаты кэшируются, чтобы не делать повторные запросы для одинаковых хостов.
 RUSSIA_CC = 'RU'
 GEOIP_API_URL = 'http://ip-api.com/batch'
 GEOIP_BATCH_SIZE = 100
@@ -143,7 +137,6 @@ class GeoIPResolver:
                 for ip in batch:
                     self.cache.setdefault(ip, None)
 
-        # Привязываем результат IP обратно к hostname.
         for host, ip in host_to_ip.items():
             self.cache[host] = self.cache.get(ip)
 
@@ -290,7 +283,6 @@ def finalize_configs(
         final_list.append(set_remark(cfg, new_remark))
     return final_list
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
 def main():
     print("📥 Загружаю белый список SNI...")
     sni_whitelist = load_sni_whitelist()
@@ -303,14 +295,11 @@ def main():
     for url in BYPASS_SOURCES:
         cfgs = fetch_configs(url)
         if cfgs:
-            # Отбираем только vless:// и hysteria2:// для мобилки (bypass / БС)
             cfgs_filtered = [cfg for cfg in cfgs if cfg.startswith(ALLOWED_PREFIXES)]
             if cfgs_filtered:
                 raw_pools.append(cfgs_filtered)
                 all_candidates.extend(cfgs_filtered)
 
-    # Новый распознаватель: GeoIP по реальному endpoint IP.
-    # В отличие от старого варианта, страна больше не берётся из remark.
     geoip = GeoIPResolver()
     geoip.resolve_configs(all_candidates)
 
@@ -324,7 +313,6 @@ def main():
     bypass_sampled = sample_from_sources(bypass_pools, 300)
     bypass_final = finalize_configs(bypass_sampled, 'обход бс', geoip)
 
-    # ── wl_228.txt (только bypass/whitelist, 300 конфигов) ────────────────────
     wl_output = '\n'.join([build_header(), '', SEPARATOR_BYPASS, *bypass_final])
     with open('wl_228.txt', 'w', encoding='utf-8') as f:
         f.write(wl_output)
