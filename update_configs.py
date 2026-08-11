@@ -20,7 +20,7 @@ def build_header():
 #profile-locked: true
 #hide-settings: 1"""
 
-SEPARATOR_BYPASS = "vless://info@0.0.0.0:443?type=tcp&security=none#для обхода бс👇"
+SEPARATOR_BYPASS = "vless://info@0.0.0.0:443?type=tcp&security=none#Для обхода бс👇"
 
 BYPASS_SOURCES = [
     "https://raw.githubusercontent.com/zieng2/wl/main/vless_universal.txt",
