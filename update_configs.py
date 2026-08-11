@@ -8,9 +8,12 @@ from urllib.parse import unquote, quote, urlparse, parse_qs
 def build_header():
     now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
     return f"""\
-#profile-title: nzea234vpnツ
-#announce: Последний апдейт на GitHub: {now} | Не работает — обнови подписку на две стрелочки
+#profile-title: nzea234vpnツ 2.0
+#announce: Последний апдейт на GitHub: {now}
+Версия: 2.0 (с возвращением!!!)
+Не работает — обнови подписку на две стрелочки
 #support-url: https://t.me/nzea_tri_bykvi
+#profile-web-page-url: https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
 #profile-locked: true
 #profile-type: encrypted
@@ -24,7 +27,6 @@ BYPASS_SOURCES = [
     "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/WHITE-CIDR-RU-all.txt",
     "https://raw.githubusercontent.com/whoahaow/rjsxrd/refs/heads/main/githubmirror/bypass/bypass-all.txt",
     "https://raw.githubusercontent.com/VOID-Anonymity/V.O.I.D-VPN_Bypass/refs/heads/main/url_work.txt",
-    "https://sub.obbhod.online/premium",
     "https://raw.githubusercontent.com/Temnuk/naabuzil/refs/heads/main/whitelist_full",
     "https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/V2RAY_RAW.txt",
     "https://raw.githubusercontent.com/kort0881/vpn-checker-backend/refs/heads/main/checked/RU_Best/ru_white_all_WHITE.txt",
@@ -32,14 +34,9 @@ BYPASS_SOURCES = [
     "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/refs/heads/main/githubmirror/26.txt",
     "https://gitverse.ru/api/repos/bywarm/rser/raw/branch/master/selected.txt",
     "https://gitverse.ru/api/repos/bywarm/rser/raw/branch/master/merged.txt",
-    "https://gist.github.com/DestroyST6767/50af50221ca1858ba2084efc0f524fbc.txt",
-    "https://drive.usercontent.google.com/download?id=1Rl6jIlf2Ula__J9F9nRmCuE6RFdqMTgk&export=download&confirm=t",
     "https://raw.githubusercontent.com/AirLinkVPN1/AirLinkVPN/refs/heads/main/rkn_white_list",
-    "https://raw.githubusercontent.com/dequar/deqwl/refs/heads/main/deray.txt",
-    "https://gitflic.ru/project/sigil/my-new-cool-project/blob/raw?file=whitelist",
     "https://raw.githubusercontent.com/Sanuyyq/sub-storage1/refs/heads/main/bs.txt",
     "https://raw.githubusercontent.com/ewecrow78-gif/whitelist1/main/list.txt",
-    "https://ety.twinkvibe.gay/whitelist",
     "https://raw.githubusercontent.com/ByeWhiteLists/ByeWhiteLists2/refs/heads/main/ByeWhiteLists2.txt",
     "https://raw.githubusercontent.com/Maskkost93/kizyak-vpn-4.0/refs/heads/main/kizyakbeta6.txt",
 ]
