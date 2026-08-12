@@ -1,8 +1,5 @@
 #profile-title: nzea234 wl 2.0
-#announce: Последний апдейт на GitHub: 19:16 12.08.2026 UTC
-Не работает — обнови подписку на две стрелочки
-Версия 2.0
-ВОССТАНИЕ
+#announce: Последний апдейт на GitHub: 19:16 12.08.2026 UTC\nНе работает — обнови подписку на две стрелочки\nВерсия 2.0\nВОССТАНИЕ
 #support-url: https://t.me/nzea_tri_bykvi
 #profile-web-page-url: https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
