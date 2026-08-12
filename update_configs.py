@@ -10,16 +10,20 @@ from urllib.parse import unquote, quote
 def build_header():
     now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
     return f"""\
-#profile-title: nzea234vpnツ
-#announce: Последний апдейт на GitHub: {now} | Не работает — обнови подписку на две стрелочки
+#profile-title: nzea234vpnツ wl 2.0
+#announce: Последний апдейт на GitHub: {now}
+Не работает — обнови подписку на две стрелочки👆
+Версия 2.0
+ВОССТАНИЕ
 #support-url: https://t.me/nzea_tri_bykvi
+#profile-web-page-url: https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
 #profile-locked: true
 #profile-type: encrypted
 #profile-locked: true
 #hide-settings: 1"""
 
-SEPARATOR_BYPASS = "vless://info@0.0.0.0:443?type=tcp&security=none#для обхода бс👇"
+SEPARATOR_BYPASS = "vless://info@0.0.0.0:443?type=tcp&security=none#Для обхода бс👇"
 
 BYPASS_SOURCES = [
     "https://raw.githubusercontent.com/zieng2/wl/main/vless_universal.txt",
