@@ -12,9 +12,9 @@ def build_header():
     return f"""\
 #profile-title: nzea234 wl 2.0
 #announce: Последний апдейт на GitHub: {now}
-Не работает — обнови подписку на две стрелочки
-Версия 2.0
-ВОССТАНИЕ
+#announce: Не работает — обнови подписку на две стрелочки
+#announce: Версия 2.0
+#announce: ВОССТАНИЕ
 #support-url: https://t.me/nzea_tri_bykvi
 #profile-web-page-url:https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
