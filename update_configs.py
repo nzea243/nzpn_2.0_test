@@ -16,6 +16,7 @@ def build_header():
 Версия 2.0
 ВОССТАНИЕ
 #support-url: https://t.me/nzea_tri_bykvi
+#profile-web-page-url:https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
 #profile-locked: true
 #profile-type: encrypted
