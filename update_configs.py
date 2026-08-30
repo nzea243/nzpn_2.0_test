@@ -10,8 +10,8 @@ from urllib.parse import unquote, quote
 def build_header():
     now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
     return f"""\
-#profile-title: nzea234 wl 2.0
-#announce: Последний апдейт на GitHub: {now}| Не работает — обнови подписку | Версия 2.0 | ВОССТАНИЕ
+#profile-title: nzpn wl 2.0.2
+#announce: Последний апдейт на GitHub: {now}| Не работает — обнови подписку | Версия 2.0.2
 #support-url: https://t.me/nzea_tri_bykvi
 #profile-web-page-url:https://t.me/send?start=IV9P4rO9112W
 #profile-update-interval: 1
