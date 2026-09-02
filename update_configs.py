@@ -20,19 +20,6 @@ def build_header():
 #profile-locked: true
 #hide-settings: 1"""
 
-def build_header_hiddify():
-    now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
-    return f"""\
-#profile-title: nzpn hiddify wl 2.0.2
-#announce: Последний апдейт на GitHub: {now}| Не работает — обнови подписку | Версия 2.0.2 | Только для Hiddify
-#support-url: https://t.me/nzea_tri_bykvi
-#profile-web-page-url:https://t.me/send?start=IV9P4rO9112W
-#profile-update-interval: 1
-#profile-locked: true
-#profile-type: encrypted
-#profile-locked: true
-#hide-settings: 1"""
-
 SEPARATOR_BYPASS = "vless://info@0.0.0.0:443?type=tcp&security=none#для обхода бс👇"
 
 BYPASS_SOURCES = [
@@ -452,7 +439,7 @@ def main():
     bypass_sampled_hiddify = sample_from_sources(bypass_pools_hiddify, 300)
     bypass_final_hiddify = finalize_configs(bypass_sampled_hiddify, '@nzea234')
 
-    hiddify_output = '\n'.join([build_header_hiddify(), '', SEPARATOR_BYPASS, *bypass_final_hiddify])
+    hiddify_output = '\n'.join([SEPARATOR_BYPASS, *bypass_final_hiddify])
     with open('hiddify_wl.txt', 'w', encoding='utf-8') as f:
         f.write(hiddify_output)
 
