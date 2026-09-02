@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import requests
 import random
 import base64
@@ -6,7 +5,6 @@ import re
 from datetime import datetime, timezone
 from urllib.parse import unquote, quote
 
-# ─── Заголовок файла ──────────────────────────────────────────────────────────
 def build_header():
     now = datetime.now(timezone.utc).strftime('%H:%M %d.%m.%Y UTC')
     return f"""\
@@ -50,7 +48,6 @@ BYPASS_SOURCES = [
 VALID_PREFIXES = ('vless://',)
 IP_RE = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
 
-# ─── База стран ───────────────────────────────────────────────────────────────
 def _flag(cc):
     return ''.join(chr(0x1F1E6 + ord(c) - ord('A')) for c in cc.upper())
 
@@ -374,7 +371,6 @@ def finalize_configs(configs: list[str], suffix: str) -> list[str]:
         final_list.append(set_remark(cfg, new_remark))
     return final_list
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
 def main():
     print("📥 Загружаю локальные белые списки IP и SNI...")
     ip_whitelist = load_local_whitelist('ip_whitelist.txt')
@@ -395,7 +391,6 @@ def main():
     bypass_sampled = sample_from_sources(bypass_pools, 300)
     bypass_final = finalize_configs(bypass_sampled, '@nzea234')
 
-    # ── wl_228.txt (мобилка: только bypass, 300 конфигов) ─────────────────────
     wl_output = '\n'.join([build_header(), '', SEPARATOR_BYPASS, *bypass_final])
     with open('wl_228.txt', 'w', encoding='utf-8') as f:
         f.write(wl_output)
