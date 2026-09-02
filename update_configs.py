@@ -439,7 +439,7 @@ def main():
     bypass_sampled_hiddify = sample_from_sources(bypass_pools_hiddify, 300)
     bypass_final_hiddify = finalize_configs(bypass_sampled_hiddify, '@nzea234')
 
-    hiddify_output = '\n'.join([SEPARATOR_BYPASS, *bypass_final_hiddify])
+    hiddify_output = '\n'.join(bypass_final_hiddify)
     with open('hiddify_wl.txt', 'w', encoding='utf-8') as f:
         f.write(hiddify_output)
 
