@@ -50,32 +50,6 @@ BYPASS_SOURCES = [
 VALID_PREFIXES = ('vless://',)
 IP_RE = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
 
-# ─── Настройки подписки для Hiddify ───────────────────────────────────────────
-HIDDIFY_BANNED_TRANSPORTS = ('kcp', 'domainsocket', 'tcp', 'xhttp')
-
-def get_query_params(config: str) -> dict[str, str]:
-    s = config.split('#', 1)[0]
-    if '?' not in s:
-        return {}
-    query = s.split('?', 1)[1]
-    params = {}
-    for part in query.split('&'):
-        if not part:
-            continue
-        if '=' in part:
-            k, v = part.split('=', 1)
-        else:
-            k, v = part, ''
-        params[unquote(k).lower()] = unquote(v).lower()
-    return params
-
-def get_transport(config: str) -> str:
-    params = get_query_params(config)
-    return params.get('type', 'tcp')
-
-def is_transport_allowed(config: str) -> bool:
-    return get_transport(config) not in HIDDIFY_BANNED_TRANSPORTS
-
 # ─── База стран ───────────────────────────────────────────────────────────────
 def _flag(cc):
     return ''.join(chr(0x1F1E6 + ord(c) - ord('A')) for c in cc.upper())
@@ -331,7 +305,7 @@ def fetch_configs(url: str) -> list[str]:
         print(f"  ✗ {url}: {e}")
         return []
 
-def preprocess_pool(pool: list[str], is_bypass: bool, ip_whitelist: set[str], sni_whitelist: set[str], require_transport_allowed: bool = False) -> list[str]:
+def preprocess_pool(pool: list[str], is_bypass: bool, ip_whitelist: set[str], sni_whitelist: set[str]) -> list[str]:
     valid = []
     for cfg in pool:
         remark = get_remark(cfg)
@@ -345,8 +319,6 @@ def preprocess_pool(pool: list[str], is_bypass: bool, ip_whitelist: set[str], sn
             else:
                 if host not in sni_whitelist:
                     continue
-        if require_transport_allowed and not is_transport_allowed(cfg):
-            continue
         valid.append(cfg)
     return valid
 
@@ -412,16 +384,12 @@ def main():
 
     print("\n📡 Загружаю bypass источники...")
     bypass_pools = []
-    bypass_pools_hiddify = []
     for url in BYPASS_SOURCES:
         cfgs = fetch_configs(url)
         if cfgs:
             valid_p = preprocess_pool(cfgs, True, ip_whitelist, sni_whitelist)
             if valid_p:
                 bypass_pools.append(valid_p)
-            valid_p_hiddify = preprocess_pool(cfgs, True, ip_whitelist, sni_whitelist, require_transport_allowed=True)
-            if valid_p_hiddify:
-                bypass_pools_hiddify.append(valid_p_hiddify)
 
     print("\n📡 Формирую bypass конфиги (строго VLESS, 300 штук)...")
     bypass_sampled = sample_from_sources(bypass_pools, 300)
@@ -433,17 +401,6 @@ def main():
         f.write(wl_output)
 
     print(f"\n✅ Готово! wl_228.txt: {len(bypass_final)} (VLESS)")
-
-    # ── hiddify_wl.txt (отдельная подписка для Hiddify, без kcp/domainsocket/tcp/xhttp) ──
-    print(f"\n📡 Формирую конфиги для Hiddify (запрещённые транспорты: {', '.join(HIDDIFY_BANNED_TRANSPORTS)})...")
-    bypass_sampled_hiddify = sample_from_sources(bypass_pools_hiddify, 300)
-    bypass_final_hiddify = finalize_configs(bypass_sampled_hiddify, '@nzea234')
-
-    hiddify_output = '\n'.join(bypass_final_hiddify)
-    with open('hiddify_wl.txt', 'w', encoding='utf-8') as f:
-        f.write(hiddify_output)
-
-    print(f"✅ Готово! hiddify_wl.txt: {len(bypass_final_hiddify)} (VLESS, без {'/'.join(HIDDIFY_BANNED_TRANSPORTS)})")
 
 if __name__ == '__main__':
     main()
