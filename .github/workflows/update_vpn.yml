@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add wl_228.txt hiddify_wl.txt
+          git add wl_228.txt
           if git diff --staged --quiet; then
             echo "Нет изменений."
           else
@@ -44,22 +44,18 @@ jobs:
         env:
           GITVERSE_TOKEN: ${{ secrets.TBI_SHUESHB_YA_NE_PONYALA }}
         run: |
-          # 1. Создаем папку и инициализируем пустой репозиторий с веткой main
           mkdir gitverse_repo
           cd gitverse_repo
           git init
           git checkout -b main
           
-          # 2. Копируем туда только наш конфиг
           cp ../wl_228.txt .
-          cp ../hiddify_wl.txt .
           
           # 3. Добавляем файл и сохраняем изменения
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add wl_228.txt hiddify_wl.txt
+          git add wl_228.txt
           git commit -m "⚡ update configs $(date -u '+%H:%M %d.%m.%Y UTC')"
-          
-          # 4. Принудительно отправляем в пустой репозиторий на GitVerse
+         
           git remote add origin https://nzea234:$GITVERSE_TOKEN@gitverse.ru/nzea234/nzpn_2.0.git
           git push -u origin main --force
