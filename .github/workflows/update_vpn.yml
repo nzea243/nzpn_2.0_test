@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add wl_228.txt
+          git add wl_228.txt hiddify_wl.txt
           if git diff --staged --quiet; then
             echo "Нет изменений."
           else
@@ -52,11 +52,12 @@ jobs:
           
           # 2. Копируем туда только наш конфиг
           cp ../wl_228.txt .
+          cp ../hiddify_wl.txt .
           
           # 3. Добавляем файл и сохраняем изменения
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add wl_228.txt
+          git add wl_228.txt hiddify_wl.txt
           git commit -m "⚡ update configs $(date -u '+%H:%M %d.%m.%Y UTC')"
           
           # 4. Принудительно отправляем в пустой репозиторий на GitVerse
