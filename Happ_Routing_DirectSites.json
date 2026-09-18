@@ -1,5 +1,5 @@
 {
-  "Name": "Happ · DirectSites SNI whitelist",
+  "Name": "РФ мимо VPN",
   "GlobalProxy": "true",
   "UseChunkFiles": "true",
   "RemoteDNSType": "DoH",
